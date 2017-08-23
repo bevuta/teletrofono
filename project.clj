@@ -5,5 +5,5 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
                  [org.clojure/core.async "0.2.395"]
-                 [org.opentelecoms.sip/mjsip-fork "1.6+lumicall.4"]
-                 [org.opentelecoms.util/util "1.0.0"]]) 
+                 [com.bevuta/mjsip-fork "1.6+lumicall.4"]
+                 [org.opentelecoms.util/util "1.0.0"]])
