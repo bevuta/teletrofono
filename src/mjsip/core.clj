@@ -116,7 +116,7 @@
   [{::client/keys [registrar-address local-address local-port display-name user realm password]
     ::mjsip/keys [sip-provider]
     :as client}]
-  (let [events (async/chan (get-in *config* [:common :buffer-size]))
+  (let [events (async/chan (get-in *config* [:common :event-channel-buffer-size]))
         listener (reify RegisterAgentListener
                    (onUaRegistrationSuccess [this rclient target contact result]
                      (println "onUaRegistrationSuccess" target contact result)
@@ -271,7 +271,7 @@
   ::call/events which is another core.async-channel provided to
   receive call related events. Returns nil."
   [client calls-chan]
-  (let [call-events (async/chan (get-in *config* [:common :buffer-size]))
+  (let [call-events (async/chan (get-in *config* [:common :event-channel-buffer-size]))
         pending-call (extended-call client
                                     {::event/call-incoming
                                      (fn [event]
@@ -287,7 +287,7 @@
   related events. Returns a new core.async-channel used to receive
   incoming-call-events. See init-call-receiver for more details."
   [client]
-  (let [calls (async/chan (get-in *config* [:common :buffer-size]))]
+  (let [calls (async/chan (get-in *config* [:common :event-channel-buffer-size]))]
     (init-call-receiver client calls)
     calls))
 
@@ -368,7 +368,7 @@
   "Initiates a new call. Returns a new outgoing call which can be used
   by await-call! to receive the incoming call."
   [caller callee]
-  (let [call-events (async/chan (get-in *config* [:common :buffer-size]))
+  (let [call-events (async/chan (get-in *config* [:common :event-channel-buffer-size]))
         call (extended-call caller
                             {:default (fn [event]
                                         (async/>!! call-events event))})
