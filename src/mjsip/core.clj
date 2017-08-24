@@ -386,7 +386,9 @@
   "Transfers the given accepted incoming call to a new callee. The
   transferor should be the current callee of the given incoming
   call. Returns a new incoming call which can be used by
-  accept-transfer! to accept it or refuse-transfer! to refuse it."
+  accept-transfer! to accept it or refuse-transfer! to refuse it.
+  wait-for-transferor! should be invoked with the given incoming call
+  after the target conversation to assure it has been closed."
   [incoming-call transferor target-callee]
   (->> (->callee-url target-callee transferor)
        (transfer incoming-call))
@@ -542,9 +544,11 @@
   call by another conversation giving the outgoing call as the
   target. The transferor should be the callee of the given accepted
   incoming call who acts as the transferor. The target-callee should
-  be the callee of the targeting outgoing call. wait-for-transferor!
-  should be invoked with the given incoming call later to assure it
-  has been closed."
+  be the callee of the targeting outgoing call. The given incoming
+  call can be used by accept-transfer! to accept it or
+  refuse-transfer! to refuse it. wait-for-transferor! should be
+  invoked with the given incoming call after the target conversation
+  to assure it has been closed."
   [incoming-call target-outgoing-call transferor target-callee]
   (->> (doto (->callee-url target-callee transferor)
          (.addParameter "Replaces" (call->replaces-dialog-value target-outgoing-call)))
