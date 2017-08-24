@@ -4,14 +4,22 @@
 (def +wait-ms+ 2000)
 (def +long-conversation-m+ 5)
 
-;; NOTE: The purpose of this fn is to simulate a human delay
-(defn wait []
+(defn wait
+  "Simulates a human delay."
+  []
   (Thread/sleep +wait-ms+))
 
-(defn long-conversation-wait []
+(defn long-conversation-wait
+  "Simulates a long conversation."
+  []
   (Thread/sleep (* +long-conversation-m+ 60000)))
 
-(defn call-without-conversation [variation watson bell]
+(defn call-without-conversation
+  "Simulates a call accepting it.
+  Variations:
+  :a - watson hangs up
+  :b - bell hangs up "
+  [variation watson bell]
   (let [outgoing-call (invite watson bell)
         incoming-call (await-call! bell outgoing-call)]
     (ring! incoming-call outgoing-call)
@@ -20,7 +28,13 @@
       :a (cancel! outgoing-call incoming-call)
       :b (busy! incoming-call outgoing-call))))
 
-(defn call-with-conversation [variation watson bell]
+(defn call-with-conversation
+  "Simulates a call with a conversation.
+  Variations:
+  :a - bell hangs up
+  :b - watson hangs up
+  :long - long conversation"
+  [variation watson bell]
   (let [outgoing-call (invite watson bell)
         incoming-call (await-call! bell outgoing-call)]
     (ring! incoming-call outgoing-call)
@@ -33,7 +47,12 @@
       :a (hangup! incoming-call outgoing-call)
       (hangup! outgoing-call incoming-call))))
 
-(defn call-hold-resume [variation watson bell]
+(defn call-hold-resume
+  "Simulates a call with a conversation holded and resumed once.
+  Variations:
+  :a - bell holds and resumes and does a hangup after that
+  :b - watson holds and resumes and does a hangup after that"
+  [variation watson bell]
   (let [outgoing-call (invite watson bell)
         incoming-call (await-call! bell outgoing-call)]
     (ring! incoming-call outgoing-call)
@@ -52,7 +71,13 @@
              (wait)
              (hangup! outgoing-call incoming-call)))))
 
-(defn consultation-call [variation watson bell gray]
+(defn consultation-call
+  "Simulates a call between watson and bell with bell consulting gray
+  during the call. Bell hangs up at the end.
+  Variations:
+  :a - gray hangs up the consultational call
+  :b - bell hangs up the consultational call"
+  [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
     (ring! incoming-call-bell outgoing-call-watson)
@@ -73,7 +98,15 @@
     (wait)
     (hangup! incoming-call-bell outgoing-call-watson)))
 
-(defn attended-transfer-with-announcement [variation watson bell gray]
+(defn attended-transfer-with-announcement
+  "Simulates a call between watson and bell with bell consulting gray
+  during the call and initiating an attended transfer to establish a
+  conversation between watson and gray.
+  Variations:
+  :a - gray hangs up the call with watson
+  :b - watson hangs up the call with gray
+  :c - gray signals business on the consultational call from bell"
+  [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
     (ring! incoming-call-bell outgoing-call-watson)
@@ -99,7 +132,15 @@
             (wait)
             (hangup! incoming-call-bell outgoing-call-watson))))))
 
-(defn attended-transfer-without-announcement [variation watson bell gray]
+(defn attended-transfer-without-announcement
+  "Simulates a call between watson and bell with bell attempting to
+  call gray during the call without gray accepting and bell initiating an
+  attended transfer to establish a conversation with watson and gray.
+  Variations:
+  :a - gray hangs up the call with watson
+  :b - watson hangs up the call with gray
+  :c - gray refuses the conversation with watson"
+  [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
     (ring! incoming-call-bell outgoing-call-watson)
@@ -124,7 +165,14 @@
           :c (refuse-transfer! incoming-call-gray outgoing-call-watson))
         (wait-for-transferor! incoming-call-bell)))))
 
-(defn unattended-transfer-without-announcement [variation watson bell gray]
+(defn unattended-transfer-without-announcement
+  "Simulates a call between watson and bell with bell transfering the
+  call directly to gray.
+  Variations:
+  :a - gray hangs up the call with watson
+  :b - watson hangs up the call with gray
+  :c - gray refuses the conversation with watson"
+  [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
     (ring! incoming-call-bell outgoing-call-watson)
@@ -144,7 +192,14 @@
         :c (refuse-transfer! incoming-call-gray outgoing-call-watson))
       (wait-for-transferor! incoming-call-bell))))
 
-(defn direct-transfer [variation watson bell gray]
+(defn direct-transfer
+  "Simulates a call between watson and bell with bell redirecting the
+  call directly to gray without accepting it.
+  Variations:
+  :a - gray hangs up the call with watson
+  :b - watson hangs up the call with gray
+  :c - gray refuses the conversation with watson"
+  [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
     (ring! incoming-call-bell outgoing-call-watson)
