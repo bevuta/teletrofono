@@ -42,20 +42,42 @@
 
 (use-fixtures :once performance-fixture)
 
-(defn run-scenario-catching [scenario-fn variation clients]
+(defn run-scenario-catching
+  "Runs the scenario function of a specific variation with a
+  collection of SIP-clients catching any exception thrown in the
+  scenario function and returning the exception-object. Investigate
+  the scenario function to see which variations and how much clients
+  it accepts."
+  [scenario-fn variation clients]
   (try (do (apply scenario-fn variation clients) true)
        (catch Throwable e e)))
 
-(defn timeout-pull!! [chan]
+(defn timeout-pull!!
+  "Pulls from the given core.async-channel blocking this thread within
+  a maximum time. Returns ::timeout when the time exceeds or the
+  pulled item otherwise."
+  [chan]
   (let [timeout-chan (async/timeout (get-in *config* [:performance-test :thread-timeout-ms]))
         [item port] (async/alts!! [chan timeout-chan])]
     (if (= port timeout-chan) ::timeout item)))
 
-(defn run-scenarios-longterm [scenario-list
-                              delay-s max-extra-delay-s
-                              duration-m
-                              threads
-                              clients]
+(defn run-scenarios-longterm
+  "Simulates a longterm activity between the given SIP-clients.  Runs
+  the scenarios of the given collection parallel and repeatedly for
+  the given duration in minutes. The collection will be shuffled
+  before every iteration, so the scenarios are picked randomly
+  assuring every scenario has been choosed once after every
+  iteration. Waits after every scenario between delay-s seconds and
+  delay-s plus max-extra-delay-s seconds. threads specifies the
+  maximum number of parallel running scenarios. scenario-coll should
+  be a collection of vectors with the scenario function as the first
+  element, the variation as the second element and the count of
+  clients the scenario is designed for as the third element."
+  [scenario-coll
+   delay-s max-extra-delay-s
+   duration-m
+   threads
+   clients]
   (let [;; Have to use a buffer size one less then the given count of threads
         ;; because this channel gets the result of the thread, so as soon as
         ;; an item is put the next thread has already been started.
@@ -88,7 +110,7 @@
         ;; Fill the channel buffer with clients
         (doseq [client clients] (async/>!! client-chan client))
         ;; Loop for the duration of time
-        (loop [scenario-seq (shuffle scenario-list)]
+        (loop [scenario-seq (shuffle scenario-coll)]
           ;; Wait a little bit before we start the next thread
           (Thread/sleep (* 1000 (+ delay-s
                                    (rand-int (inc max-extra-delay-s)))))
@@ -96,7 +118,7 @@
           (if (< (current-time) end-time)
             (recur (if-let [scenario-seq (next scenario-seq)]
                      scenario-seq
-                     (shuffle scenario-list)))
+                     (shuffle scenario-coll)))
             (async/close! thread-chan)))
         (async/close! client-chan)))
     (loop [thread-result-seq thread-result-seq
@@ -111,7 +133,7 @@
         (recur (next thread-result-seq) (inc n))))))
 
 (deftest performance-test-longterm
-  (let [scenario-list [[call-without-conversation :a 2]
+  (let [scenario-coll [[call-without-conversation :a 2]
                        [call-without-conversation :b 2]
                        [call-with-conversation :a 2]
                        [call-with-conversation :b 2]
@@ -136,7 +158,7 @@
                 scenario-max-extra-delay-s
                 duration-m
                 max-threads]} (:performance-test *config*)]
-    (run-scenarios-longterm scenario-list
+    (run-scenarios-longterm scenario-coll
                             scenario-delay-s
                             scenario-max-extra-delay-s
                             duration-m
