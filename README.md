@@ -8,7 +8,7 @@ The name of this project is inspired by Antonio Meucci who called his
 invention of an early voice communicating device "teletrofono". For more information
 see the
 article
-[Ivention of the telephone](https://en.wikipedia.org/wiki/Invention_of_the_telephone) on
+[Invention of the telephone](https://en.wikipedia.org/wiki/Invention_of_the_telephone) on
 wikipedia.org.
 
 ## Usage
