@@ -1,6 +1,9 @@
 (defproject teletrofono "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description "A library written in clojure to write scenarios
+testing the the Session Initiation Protocol (SIP) of a Back-to-Back
+User Agent
+(B2BUA)."
+  :url "https://github.com/bevuta/teletrofono"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.9.0-alpha14"]
