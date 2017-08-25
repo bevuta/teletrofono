@@ -1,4 +1,4 @@
-(ns mjsip.unit-test.config
+(ns teletrofono.unit-test.config
   (:require [clojure.spec :as s]))
 
 (s/def ::display-name string?)

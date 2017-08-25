@@ -1,5 +1,5 @@
-(ns mjsip.test-scenarios
-  (:require [mjsip.core :refer :all]))
+(ns teletrofono.test-scenarios
+  (:require [teletrofono.core :refer :all]))
 
 (def +wait-ms+ 2000)
 (def +long-conversation-m+ 5)

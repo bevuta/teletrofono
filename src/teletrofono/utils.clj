@@ -1,4 +1,4 @@
-(ns mjsip.utils)
+(ns teletrofono.utils)
 
 (defmacro child-ns
   ([name]

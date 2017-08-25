@@ -1,19 +1,19 @@
-(ns mjsip.performance-test
+(ns teletrofono.performance-test
   (:require [clojure.core.async :as async]
             [clojure.test :refer :all]
             [clojure.string :as str]
             [clojure.spec :as s]
 
-            [mjsip.core :as core]
-            [mjsip.config :refer [*config*
+            [teletrofono.core :as core]
+            [teletrofono.config :refer [*config*
                                   load-config]]
-            [mjsip.utils :as utils]
-            [mjsip.test-utils :refer :all]
-            [mjsip.test-scenarios :refer :all]
-            [mjsip.common.config :as common.config]
-            [mjsip.performance-test.config :as config]))
+            [teletrofono.utils :as utils]
+            [teletrofono.test-utils :refer :all]
+            [teletrofono.test-scenarios :refer :all]
+            [teletrofono.common.config :as common.config]
+            [teletrofono.performance-test.config :as config]))
 
-(utils/child-ns client mjsip.core.client)
+(utils/child-ns client teletrofono.core.client)
 
 (def ^:dynamic *clients*)
 

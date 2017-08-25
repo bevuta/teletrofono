@@ -1,13 +1,13 @@
-(ns mjsip.test-utils
+(ns teletrofono.test-utils
   (:require [clojure.test :refer :all]
             [clojure.java.shell :refer :all]
             [clojure.string :refer [split-lines
                                     split
                                     starts-with?]]
-            [mjsip.config :refer [*config*]]
-            [mjsip.utils :refer [child-ns]]))
+            [teletrofono.config :refer [*config*]]
+            [teletrofono.utils :refer [child-ns]]))
 
-(child-ns client mjsip.core.client)
+(child-ns client teletrofono.core.client)
 
 (defn qualify-keys [m ns]
   (into {}

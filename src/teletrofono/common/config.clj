@@ -1,4 +1,4 @@
-(ns mjsip.common.config
+(ns teletrofono.common.config
   (:require [clojure.spec :as s]))
 
 (s/def ::realm string?)

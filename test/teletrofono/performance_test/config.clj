@@ -1,4 +1,4 @@
-(ns mjsip.performance-test.config
+(ns teletrofono.performance-test.config
   (:require [clojure.spec :as s]))
 
 (s/def ::client-fn fn?)

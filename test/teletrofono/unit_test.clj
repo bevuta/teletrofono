@@ -1,17 +1,17 @@
-(ns mjsip.unit-test
+(ns teletrofono.unit-test
   (:require [clojure.test :refer :all]
             [clojure.spec :as s]
 
-            [mjsip.core :as core]
-            [mjsip.common.config :as common.config]
-            [mjsip.config :refer [*config*
+            [teletrofono.core :as core]
+            [teletrofono.common.config :as common.config]
+            [teletrofono.config :refer [*config*
                                   load-config]]
-            [mjsip.utils :as utils]
-            [mjsip.test-scenarios :refer :all]
-            [mjsip.test-utils :refer :all]
-            [mjsip.unit-test.config :as config]))
+            [teletrofono.utils :as utils]
+            [teletrofono.test-scenarios :refer :all]
+            [teletrofono.test-utils :refer :all]
+            [teletrofono.unit-test.config :as config]))
 
-(utils/child-ns client mjsip.core.client)
+(utils/child-ns client teletrofono.core.client)
 
 (def ^:dynamic *intern-a*)
 (def ^:dynamic *intern-b*)

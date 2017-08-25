@@ -1,8 +1,9 @@
-(ns mjsip.core
+(ns teletrofono.core
   (:require [clojure.core.async :as async]
             [clojure.spec :as s]
-            [mjsip.utils :refer [child-ns]]
-            [mjsip.config :refer [*config*]])
+            [teletrofono.utils :refer [child-ns
+                                       update-with]]
+            [teletrofono.config :refer [*config*]])
   (:import (org.zoolu.sip.provider SipProvider
                                    SipProviderListener
                                    SipStack
@@ -376,6 +377,27 @@
     (.call (::mjsip/call call) (str callee-url))
     (assoc call ::call/events call-events)))
 
+(defn await-call!
+  "Waits for an invitation. reference-call is just for debugging
+  purpose to identify the call referenced by this action in case of
+  failure. Usually it is the outgoing call created by invite. Returns
+  a new incoming call which further can be used by ring!, accept! or
+  busy!."
+  [callee reference-call]
+  (let [call-id (-> reference-call ::mjsip/call .getInviteDialog .getCallID)
+        calls-chan (::client/incoming-calls callee)
+        incoming-call (await! calls-chan (get-in *config* [:common :default-timeout-ms]))]
+    (when (= incoming-call ::timeout)
+      (throw (ex-info "Didn't receive incoming call" {::call-id call-id})))
+    incoming-call))
+
+(defn- call->replaces-dialog-value [outgoing-call]
+  (let [invite-dialog (.getInviteDialog (::mjsip/call outgoing-call))]
+    (-> (str (.getCallID invite-dialog)
+             ";to-tag=" (.getRemoteTag invite-dialog)
+             ";from-tag=" (.getLocalTag invite-dialog))
+        (URLEncoder/encode "UTF-8"))))
+
 (defn transfer
   "Sends a REFER-Request to transfer the given incoming call to
   the given SipURL-object as target. Returns nil."
@@ -517,27 +539,6 @@
   [client]
   (register client)
   (expect-events! (::registration/events client) [::event/registration-success]))
-
-(defn await-call!
-  "Waits for an invitation. reference-call is just for debugging
-  purpose to identify the call referenced by this action in case of
-  failure. Usually it is the outgoing call created by invite. Returns
-  a new incoming call which further can be used by ring!, accept! or
-  busy!."
-  [callee reference-call]
-  (let [call-id (-> reference-call ::mjsip/call .getInviteDialog .getCallID)
-        calls-chan (::client/incoming-calls callee)
-        incoming-call (await! calls-chan (get-in *config* [:common :default-timeout-ms]))]
-    (when (= incoming-call ::timeout)
-      (throw (ex-info "Didn't receive incoming call" {::call-id call-id})))
-    incoming-call))
-
-(defn- call->replaces-dialog-value [outgoing-call]
-  (let [invite-dialog (.getInviteDialog (::mjsip/call outgoing-call))]
-    (-> (str (.getCallID invite-dialog)
-             ";to-tag=" (.getRemoteTag invite-dialog)
-             ";from-tag=" (.getLocalTag invite-dialog))
-        (URLEncoder/encode "UTF-8"))))
 
 (defn replacing-transfer!
   "Initiates an attended transfer by replacing an accepted incoming

@@ -1,4 +1,4 @@
-(ns mjsip.config
+(ns teletrofono.config
   (:require [clojure.spec :as s]))
 
 (defn load-config [spec file]
