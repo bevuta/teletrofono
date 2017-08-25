@@ -71,10 +71,10 @@ Here is a simple example of such a scenario function:
         ;; Bell waits for the invitation identified by the given
         ;; outgoing call which results in a incoming call as soon as
         ;; the invitation was received. The call is not yet
-        ;; accepted. The incoming call is associated with bell as the
+        ;; accepted. The incoming call is associated with Bell as the
         ;; callee.
         incoming-call (await-call! bell outgoing-call)]
-    ;; Bell response with a Ringing-Signal using the incoming call as
+    ;; Bell responds with a Ringing-Signal using the incoming call as
     ;; the origin and the outgoing call as the receiver of the signal.
     (ring! incoming-call outgoing-call)
     ;; Now Bell accepts the call by signaling a confirmation from the
