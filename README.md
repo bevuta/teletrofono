@@ -98,13 +98,23 @@ You can for example first add the scenario above to the
 unit-test function in the `teletrofono.unit-test` namespace:
 
 ``` clojure
-(deftest simple-conversation
+(deftest simple-conversation_short_ii
   ;; Run the variation :short with internal client a and b.
   (run-scenario simple-conversation :short *intern-a* *intern-b*))
 ```
 
+The name for this test function comes from following rules:
+- `scenario-fn`_`variation`_`client-combination`
+- `scenario-fn` - The name of the scenario function
+- `variation` - The variation of the scenario
+- `client-combination` - Collection of lower case letters indicating
+  how many and which combination of internal and external SIP-clients
+  are used. `i` is for internal and `e` for external.
+
 The configuration and the SIP-clients are initialized in the fixture,
-so you can try your scenario by simply running this test function.
+so you can try your scenario by simply running this test function or
+test the whole namespace which runs all unit-tests in the order they
+appear in the file.
 
 ## License
 
