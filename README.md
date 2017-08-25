@@ -40,9 +40,12 @@ time lein test teletrofono.performance-test 2> stderr.log > stdout.log
 ```
 
 After that you find a summary of the assertions and perhaps some
-exception-reports in `stdout.log`. `stderr.log` contains more detailed
-logging outputs, which can be a lot depending on the test
-duration. The `time` command measures the duration of the test.
+exception-reports in `stdout.log`. Debugging information of received
+SIP-events will also be logged into `stdout.log` unless you configure
+`src/log4j.properties` to do otherwise. `stderr.log` contains logging
+outputs from the java-dependency `com.bevuta/mjsip-fork` with more
+details, which can be a lot depending on the test duration. The `time`
+command measures the duration of the test.
 
 ## Customization
 
