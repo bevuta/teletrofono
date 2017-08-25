@@ -1,6 +1,7 @@
 (ns teletrofono.core
   (:require [clojure.core.async :as async]
             [clojure.spec :as s]
+            [clojure.tools.logging :as log]
             [teletrofono.utils :refer [child-ns
                                        update-with]]
             [teletrofono.config :refer [*config*]])
@@ -36,6 +37,11 @@
 (child-ns client)
 (child-ns registration)
 (child-ns mjsip)
+
+(defn call-id
+  "Returns the call-id of the dialog associated with the given call."
+  [call]
+  (-> call .getInviteDialog .getCallID))
 
 (defn extern-client?
   "Checks whether the SIP-client is external. External means not associated to a B2BUA."
@@ -120,10 +126,16 @@
   (let [events (async/chan (get-in *config* [:common :event-channel-buffer-size]))
         listener (reify RegisterAgentListener
                    (onUaRegistrationSuccess [this rclient target contact result]
-                     (println "onUaRegistrationSuccess" target contact result)
+                     (log/debug "Received event registration-success:\n"
+                                "target:" (str target) "\n"
+                                "contact:" (str contact) "\n"
+                                "result:" (str result))
                      (async/>!! events {::event/name ::event/registration-success}))
                    (onUaRegistrationFailure [this rclient target contact result]
-                     (println "onUaRegistrationFailure" target contact result)
+                     (log/debug "Received event registration-failure:\n"
+                                "target:" (str target) "\n"
+                                "contact:" (str contact) "\n"
+                                "result:" (str result))
                      (async/>!! events {::event/name ::event/registration-failure})))]
     {::mjsip/register-agent (RegisterAgent. sip-provider
                                             (str (target-address client))
@@ -153,87 +165,132 @@
                  (handle-event event-handlers
                                event-name
                                (assoc event-attrs ::call/uuid call-uuid)))
-        _ (prn (::mjsip/sip-provider client))
         listener (reify ExtendedCallListener
-                              (onCallIncoming [this call callee caller sdp invite]
-                                (println "onCallIncoming" (.getCallIdHeader invite))
-                                (handle ::event/call-incoming
-                                        {::mjsip/call call
-                                         ::mjsip/callee callee
-                                         ::mjsip/caller caller}))
-                              (onCallModifying [this call sdp invite]
-                                (println "onCallModifying" (.getCallIdHeader invite))
-                                (handle ::event/call-modifying
-                                        {::mjsip/call call}))
-                              (onCallRinging [this call resp]
-                                (println "onCallRinging")
-                                (handle ::event/call-ringing
-                                        {::mjsip/sip-response resp
-                                         ::mjsip/call call}))
-                              (onCallAccepted [this call sdp resp]
-                                (println "onCallAccepted")
-                                (handle ::event/call-accepted
-                                        {::mjsip/call call}))
-                              (onCallRefused [this call reason resp]
-                                (println "onCallRefused:" reason)
-                                (handle ::event/call-refused
-                                        {::mjsip/call call}))
-                              (onCallRedirection [this call reason contact-list resp]
-                                (println "onCallRedirection")
-                                (handle ::event/call-redirection
-                                        {::mjsip/call call}))
-                              (onCallConfirmed [this call sdp ack]
-                                (println "onCallConfirmed")
-                                (handle ::event/call-confirmed
-                                        {::mjsip/call call}))
-                              (onCallTimeout [this call]
-                                (println "onCallTimeout")
-                                (handle ::event/call-timeout
-                                        {::mjsip/call call}))
-                              (onCallReInviteAccepted [this call sdp resp]
-                                (println "onCallReInviteAccepted")
-                                (handle ::event/call-reinvite-accepted
-                                        {::mjsip/call call}))
-                              (onCallReInviteRefused [this call reason resp]
-                                (println "onCallReInviteRefused")
-                                (handle ::event/call-reinvite-refused
-                                        {::mjsip/call call}))
-                              (onCallReInviteTimeout [this call]
-                                (println "onCallReInviteTimeout")
-                                (handle ::event/call-reinvite-timeout
-                                        {::mjsip/call call}))
-                              (onCallCanceling [this call cancel]
-                                (println "onCallCanceling")
+                   (onCallIncoming [this call callee caller sdp invite]
+                     (log/debug "Received event call-incoming:\n"
+                                "call-id:" (call-id call) "\n"
+                                "callee:" (str callee) "\n"
+                                "caller:" (str caller) "\n"
+                                "message:" (str invite))
+                     (handle ::event/call-incoming
+                             {::mjsip/call call
+                              ::mjsip/callee callee
+                              ::mjsip/caller caller}))
+                   (onCallModifying [this call sdp invite]
+                     (log/debug "Received event call-modifying:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str invite))
+                     (handle ::event/call-modifying
+                             {::mjsip/call call}))
+                   (onCallRinging [this call resp]
+                     (log/debug "Received event call-ringing:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-ringing
+                             {::mjsip/sip-response resp
+                              ::mjsip/call call}))
+                   (onCallAccepted [this call sdp resp]
+                     (log/debug "Received event call-accepted:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-accepted
+                             {::mjsip/call call}))
+                   (onCallRefused [this call reason resp]
+                     (log/debug "Received event call-refused:\n"
+                                "call-id:" (call-id call) "\n"
+                                "reason:" (str reason) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-refused
+                             {::mjsip/call call}))
+                   (onCallRedirection [this call reason contact-list resp]
+                     (log/debug "Received event call-redirection:\n"
+                                "call-id:" (call-id call) "\n"
+                                "reason:" (str reason) "\n"
+                                "contact-list:" (str contact-list) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-redirection
+                             {::mjsip/call call}))
+                   (onCallConfirmed [this call sdp ack]
+                     (log/debug "Received event call-confirmed:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str ack))
+                     (handle ::event/call-confirmed
+                             {::mjsip/call call}))
+                   (onCallTimeout [this call]
+                     (log/debug "Received event call-timeout:\n"
+                                "call-id:" (call-id call))
+                     (handle ::event/call-timeout
+                             {::mjsip/call call}))
+                   (onCallReInviteAccepted [this call sdp resp]
+                     (log/debug "Received event call-accepted:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-reinvite-accepted
+                             {::mjsip/call call}))
+                   (onCallReInviteRefused [this call reason resp]
+                     (log/debug "Received event call-reinvite-refused:\n"
+                                "call-id:" (call-id call) "\n"
+                                "reason:" (str reason) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-reinvite-refused
+                             {::mjsip/call call}))
+                   (onCallReInviteTimeout [this call]
+                     (log/debug "Received event call-reinvite-timeout:\n"
+                                "call-id:" (call-id call))
+                     (handle ::event/call-reinvite-timeout
+                             {::mjsip/call call}))
+                   (onCallCanceling [this call cancel]
+                     (log/debug "Received event call-cancelling:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str cancel))
                                 (handle ::event/call-cancelling
                                         {::mjsip/call call}))
-                              (onCallClosing [this call bye]
-                                (println "onCallClosing")
-                                (handle ::event/call-closing
-                                        {::mjsip/call call}))
-                              (onCallClosed [this call resp]
-                                (println "onCallClosed")
-                                (handle ::event/call-closed
-                                        {::mjsip/call call}))
-                              (onCallTransfer [this call refer-to refered-by refer]
-                                (println "onCallTransfer")
-                                (handle ::event/call-transfer
-                                        {::mjsip/call call}))
-                              (onCallTransferAccepted [this call resp]
-                                (println "onCallTransferAccepted")
-                                (handle ::event/call-transfer-accepted
-                                        {::mjsip/call call}))
-                              (onCallTransferRefused [this call reason resp]
-                                (println "onCallTransferRefused")
-                                (handle ::event/call-transfer-refused
-                                        {::mjsip/call call}))
-                              (onCallTransferSuccess [this call notify]
-                                (println "onCallTransferSuccess")
-                                (handle ::event/call-transfer-success
-                                        {::mjsip/call call}))
-                              (onCallTransferFailure [this call reason notify]
-                                (println "onCallTransferFailure")
-                                (handle ::event/call-transfer-failure
-                                        {::mjsip/call call})))
+                   (onCallClosing [this call bye]
+                     (log/debug "Received event call-closing:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str bye))
+                     (handle ::event/call-closing
+                             {::mjsip/call call}))
+                   (onCallClosed [this call resp]
+                     (log/debug "Received event call-closed:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-closed
+                             {::mjsip/call call}))
+                   (onCallTransfer [this call refer-to refered-by refer]
+                     (log/debug "Received event call-transfer:\n"
+                                "call-id:" (call-id call) "\n"
+                                "refer-to:" (str refer-to) "\n"
+                                "refered-by:" (str refered-by) "\n"
+                                "message:" (str refer))
+                     (handle ::event/call-transfer
+                             {::mjsip/call call}))
+                   (onCallTransferAccepted [this call resp]
+                     (log/debug "Received event call-transfer-accepted:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-transfer-accepted
+                             {::mjsip/call call}))
+                   (onCallTransferRefused [this call reason resp]
+                     (log/debug "Received event call-transfer-refused:\n"
+                                "call-id:" (call-id call) "\n"
+                                "reason:" (str reason) "\n"
+                                "message:" (str resp))
+                     (handle ::event/call-transfer-refused
+                             {::mjsip/call call}))
+                   (onCallTransferSuccess [this call notify]
+                     (log/debug "Received event call-transfer-success:\n"
+                                "call-id:" (call-id call) "\n"
+                                "message:" (str notify))
+                     (handle ::event/call-transfer-success
+                             {::mjsip/call call}))
+                   (onCallTransferFailure [this call reason notify]
+                     (log/debug "Received event call-transfer-failure:\n"
+                                "call-id:" (call-id call) "\n"
+                                "reason:" (str reason) "\n"
+                                "message:" (str notify))
+                     (handle ::event/call-transfer-failure
+                             {::mjsip/call call})))
         call (if (extern-client? client)
                (ExtendedCall. (::mjsip/sip-provider client)
                               (str (client-address ::client/display-name
@@ -337,10 +394,7 @@
                          (::event/name event)
                          " instead of one of the expected ones")
                     {::expected expected-event-names
-                     ::call-id (-> event
-                                   ::mjsip/call
-                                   .getInviteDialog
-                                   .getCallID)}))))
+                     ::call-id (-> event ::mjsip/call call-id)}))))
 
 (defn expect-events!
   "Pulls the received call events from the core.async-channel and
@@ -384,11 +438,11 @@
   a new incoming call which further can be used by ring!, accept! or
   busy!."
   [callee reference-call]
-  (let [call-id (-> reference-call ::mjsip/call .getInviteDialog .getCallID)
-        calls-chan (::client/incoming-calls callee)
+  (let [calls-chan (::client/incoming-calls callee)
         incoming-call (await! calls-chan (get-in *config* [:common :default-timeout-ms]))]
     (when (= incoming-call ::timeout)
-      (throw (ex-info "Didn't receive incoming call" {::call-id call-id})))
+      (throw (ex-info "Didn't receive incoming call"
+                      {::call-id (-> reference-call ::mjsip/call call-id)})))
     incoming-call))
 
 (defn- call->replaces-dialog-value [outgoing-call]
