@@ -31,7 +31,7 @@
           ;; as a callee called by an internal client. So the B2BUA
           ;; should has configured a public calling number including
           ;; the extension to route to this external client.
-          :base-number "49611"}
+          :base-number "49123"}
  :unit-tests {;; Three internal and one external SIP-clients.
               :clients {:intern-a {:display-name "Thomas Watson"
                                    :local-port 5061
@@ -58,11 +58,11 @@
                     ;; returns the configuration of an internal
                     ;; SIP-client asigned to this index
                     :client-fn (fn [i]
-                                 (let [id (+ 9000 i)]
+                                 (let [id (+ 1000 i)]
                                    {:display-name (str "Testuser " id)
                                     :local-port (+ 49152 id)
                                     :extension (str id)
-                                    :call-number (format "54321%03d" id)
+                                    :call-number (str "5432" id)
                                     :user (str id)
                                     :password "testuser"}))
 
@@ -81,7 +81,7 @@
                     :max-threads 50
 
                     ;; Duration of the performance test
-                    :duration-m 1
+                    :duration-m 5
 
                     ;; Lower bound of the delay in seconds between
                     ;; every scenario
