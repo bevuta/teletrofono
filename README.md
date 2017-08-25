@@ -1,10 +1,11 @@
 # teletrófono
 
-A library written in clojure to write scenarios testing a Back-to-Back
-User Agent (B2BUA) using the Session Initiation Protocol (SIP).
+A library written in clojure to write scenarios testing the the
+Session Initiation Protocol (SIP) of a Back-to-Back User Agent
+(B2BUA).
 
 The name of this project is inspired by Antonio Meucci who called his
-invention of an early voice communicating device. For more information
+invention of an early voice communicating device "teletrofono". For more information
 see the
 article
 [Ivention of the telephone](https://en.wikipedia.org/wiki/Invention_of_the_telephone) on
@@ -32,16 +33,16 @@ and stdout into seperate files.
 time lein test teletrofono.unit-test 2> stderr.log > stdout.log
 ```
 
-Or with the performance test you have just configured in `config.clj`.
+Or you can run the performance test you have just configured in `config.clj`.
 
 ``` shell
-time lein test teletrofono.unit-test 2> stderr.log > stdout.log
+time lein test teletrofono.performance-test 2> stderr.log > stdout.log
 ```
 
 After that you find a summary of the assertions and perhaps some
-exception-reports in stdout.log. stderr.log contains more detailed
-logging outputs, which can be a lot depending on the test. The `time`
-command measures the duration of the test.
+exception-reports in `stdout.log`. `stderr.log` contains more detailed
+logging outputs, which can be a lot depending on the test
+duration. The `time` command measures the duration of the test.
 
 ## Customization
 
