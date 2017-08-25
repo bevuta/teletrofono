@@ -7,12 +7,12 @@
 (s/def ::clients pos?)
 (s/def ::max-threads pos?)
 (s/def ::duration-m pos?)
-(s/def ::scenario-delay-s nat-int?)
-(s/def ::scenario-max-extra-delay-s nat-int?)
+(s/def ::scenario-min-delay-s nat-int?)
+(s/def ::scenario-max-delay-s nat-int?)
 (s/def ::performance-test (s/keys :req-un [::client-fn
                                            ::register-delay-ms
                                            ::thread-timeout-ms
                                            ::clients
                                            ::duration-m
-                                           ::scenario-delay-s
-                                           ::scenario-max-extra-delay-s]))
+                                           ::scenario-min-delay-s
+                                           ::scenario-max-delay-s]))

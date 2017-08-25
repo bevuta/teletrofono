@@ -83,10 +83,8 @@
                     ;; Duration of the performance test
                     :duration-m 5
 
-                    ;; Lower bound of the delay in seconds between
-                    ;; every scenario
-                    :scenario-delay-s 4
+                    ;; Minimum delay in seconds after every scenario
+                    :scenario-min-delay-s 4
 
-                    ;; Upper bound of the delay time in seconds
-                    ;; between every scenario
-                    :scenario-max-extra-delay-s 6}}
+                    ;; Maximum delay in seconds after every scenario
+                    :scenario-max-delay-s 10}}

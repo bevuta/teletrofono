@@ -67,14 +67,14 @@
   the given duration in minutes. The collection will be shuffled
   before every iteration, so the scenarios are picked randomly
   assuring every scenario has been choosed once after every
-  iteration. Waits after every scenario between delay-s seconds and
-  delay-s plus max-extra-delay-s seconds. threads specifies the
-  maximum number of parallel running scenarios. scenario-coll should
-  be a collection of vectors with the scenario function as the first
-  element, the variation as the second element and the count of
-  clients the scenario is designed for as the third element."
+  iteration. Waits after every scenario between min-delay-s and
+  max-delay-s seconds. threads specifies the maximum number of
+  parallel running scenarios. scenario-coll should be a collection of
+  vectors with the scenario function as the first element, the
+  variation as the second element and the count of clients the
+  scenario is designed for as the third element."
   [scenario-coll
-   delay-s max-extra-delay-s
+   min-delay-s max-delay-s
    duration-m
    threads
    clients]
@@ -112,8 +112,9 @@
         ;; Loop for the duration of time
         (loop [scenario-seq (shuffle scenario-coll)]
           ;; Wait a little bit before we start the next thread
-          (Thread/sleep (* 1000 (+ delay-s
-                                   (rand-int (inc max-extra-delay-s)))))
+          (Thread/sleep (* 1000 (+ min-delay-s
+                                   (rand-int (inc (- max-delay-s
+                                                     min-delay-s))))))
           (async/>!! thread-chan (start-thread (first scenario-seq)))
           (if (< (current-time) end-time)
             (recur (if-let [scenario-seq (next scenario-seq)]
@@ -154,13 +155,13 @@
                        [direct-transfer :a 3]
                        [direct-transfer :b 3]
                        [direct-transfer :c 3]]
-        {:keys [scenario-delay-s
-                scenario-max-extra-delay-s
+        {:keys [scenario-min-delay-s
+                scenario-max-delay-s
                 duration-m
                 max-threads]} (:performance-test *config*)]
     (run-scenarios-longterm scenario-coll
-                            scenario-delay-s
-                            scenario-max-extra-delay-s
+                            scenario-min-delay-s
+                            scenario-max-delay-s
                             duration-m
                             max-threads
                             *clients*)))
