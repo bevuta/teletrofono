@@ -104,7 +104,7 @@ unit-test function in the `teletrofono.unit-test` namespace:
 ```
 
 The name for this test function comes from following rules:
-- `scenario-fn`_`variation`_`client-combination`
+`scenario-fn_variation_client-combination`
 - `scenario-fn` - The name of the scenario function
 - `variation` - The variation of the scenario
 - `client-combination` - Collection of lower case letters indicating
