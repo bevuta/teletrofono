@@ -26,7 +26,7 @@ file and edit it:
 cp config.example.clj config.clj
 ```
 
-The `config.example.clj` contains all configuration options with
+The file `config.example.clj` contains all configuration options with
 documentation as code comments. Please look there for a explanation of
 the options.
 
@@ -60,7 +60,7 @@ scenario and its variations.
 ### Performance-tests
 
 Actually it is just one test function testing all predefined scenarios
-and there variations. In the namespace `teletrofono.performance-test`
+and their variations. In the namespace `teletrofono.performance-test`
 you can find the logic for the whole performance test provided by the
 function `run-scenarios-longterm`. The docstring of this function
 describes the procedure in detail.
