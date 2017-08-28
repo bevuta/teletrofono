@@ -26,6 +26,10 @@ file and edit it:
 cp config.example.clj config.clj
 ```
 
+The `config.example.clj` contains all configuration options with
+documentation as code comments. Please look there for a explanation of
+the options.
+
 You can now run leiningen with the unit-test namespace and pipe stderr
 and stdout into seperate files.
 
@@ -47,13 +51,28 @@ outputs from the java-dependency `com.bevuta/mjsip-fork` with more
 details, which can be a lot depending on the test duration. The `time`
 command measures the duration of the test.
 
+### Unit-tests
+
+The unit tests are gathered in the appropriate testing namespace
+`teletrofono.unit-test`. There is an own test-function for every test
+scenario and its variations.
+
+### Performance-tests
+
+Actually it is just one test function testing all predefined scenarios
+and there variations. In the namespace `teletrofono.performance-test`
+you can find the logic for the whole performance test provided by the
+function `run-scenarios-longterm`. The docstring of this function
+describes the procedure in detail.
+
 ## Customization
 
 You are free to fork this project to implement your own testing
 scenarios suiting the enironment you are working on.
 
 In the namespace `teletrofono.test-scenarios` you can find a set of
-predefined scenario functions. All these scenarios are used by
+predefined scenario functions. The scenarios are described in the
+docstrings of the functions. All these scenarios are used by
 `teletrofono.unit-test` and `teletrofono.performance-test`. There you
 can find analogous fixtures which prepare the SIP-clients used by the
 scenario functions.
