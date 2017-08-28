@@ -43,11 +43,6 @@
   [call]
   (-> call .getInviteDialog .getCallID))
 
-(defn extern-client?
-  "Checks whether the SIP-client is external. External means not associated to a B2BUA."
-  [client]
-  (= :extern (::client/type client)))
-
 (defn client-sip-url
   "Creates a SipURL-object from a SIP-client with the given keywords
   retrieved from the SIP-client for the specific URL-parts. The format
@@ -89,15 +84,10 @@
 (defn callee->client-sip-url
   "Creates a SipURL-object from the given SIP-client used to define a callee."
   [callee]
-  (if (extern-client? callee)
-    (client-sip-url ::client/call-number
-                    ::client/local-address
-                    ::client/local-port
-                    callee)
-    (client-sip-url ::client/extension
-                    ::client/registrar-address
-                    ::client/registrar-port
-                    callee)))
+  (client-sip-url ::client/extension
+                  ::client/registrar-address
+                  ::client/registrar-port
+                  callee))
 
 (defn sip-provider
   "Creates a SipProvider-object from the given SIP-client."
@@ -106,8 +96,7 @@
                                (or local-port 0)
                                (into-array ["udp"])
                                local-address)]
-    (when-not (extern-client? client)
-      (.setOutboundProxy provider (SocketAddress. registrar-address)))
+    (.setOutboundProxy provider (SocketAddress. registrar-address))
     (.addSipProviderListener provider
                              (MethodIdentifier. SipMethods/OPTIONS)
                              (reify SipProviderListener
@@ -291,34 +280,21 @@
                                 "message:" (str notify))
                      (handle ::event/call-transfer-failure
                              {::mjsip/call call})))
-        call (if (extern-client? client)
-               (ExtendedCall. (::mjsip/sip-provider client)
-                              (str (client-address ::client/display-name
-                                                   ::client/call-number
-                                                   ::client/local-address
-                                                   ::client/local-port
-                                                   client))
-                              (str (client-address ::client/display-name
-                                                   ::client/call-number
-                                                   ::client/local-address
-                                                   ::client/local-port
-                                                   client))
-                              listener)
-               (ExtendedCall. (::mjsip/sip-provider client)
-                              (str (client-address ::client/display-name
-                                                   ::client/user
-                                                   ::client/registrar-address
-                                                   ::client/registrar-port
-                                                   client))
-                              (str (client-address ::client/display-name
-                                                   ::client/extension
-                                                   ::client/registrar-address
-                                                   ::client/registrar-port
-                                                   client))
-                              (::client/user client)
-                              (::client/realm client)
-                              (::client/password client)
-                              listener))]
+        call (ExtendedCall. (::mjsip/sip-provider client)
+                            (str (client-address ::client/display-name
+                                                 ::client/user
+                                                 ::client/registrar-address
+                                                 ::client/registrar-port
+                                                 client))
+                            (str (client-address ::client/display-name
+                                                 ::client/extension
+                                                 ::client/registrar-address
+                                                 ::client/registrar-port
+                                                 client))
+                            (::client/user client)
+                            (::client/realm client)
+                            (::client/password client)
+                            listener)]
     {::call/uuid call-uuid
      ::mjsip/call call}))
 
@@ -410,15 +386,6 @@
         (treat-received-event event event-names)
         (recur (remove (-> event ::event/name list set) event-names))))))
 
-(defn- ->callee-url [callee caller]
-  (let [client-sip-url (callee->client-sip-url callee)]
-    (if (extern-client? caller)
-      (SipURL. (str (get-in *config* [:common :base-number])
-                    (::client/call-number callee))
-               (.getHost client-sip-url)
-               (.getPort client-sip-url))
-      client-sip-url)))
-
 (defn invite
   "Initiates a new call. Returns a new outgoing call which can be used
   by await-call! to receive the incoming call."
@@ -427,7 +394,7 @@
         call (extended-call caller
                             {:default (fn [event]
                                         (async/>!! call-events event))})
-        callee-url (->callee-url callee caller)]
+        callee-url (callee->client-sip-url callee)]
     (.call (::mjsip/call call) (str callee-url))
     (assoc call ::call/events call-events)))
 
@@ -459,14 +426,13 @@
   (.transfer (::mjsip/call incoming-call) (str target-url)))
 
 (defn transfer!
-  "Transfers the given accepted incoming call to a new callee. The
-  transferor should be the current callee of the given incoming
-  call. Returns a new incoming call which can be used by
-  accept-transfer! to accept it or refuse-transfer! to refuse it.
-  wait-for-transferor! should be invoked with the given incoming call
-  after the target conversation to assure it has been closed."
-  [incoming-call transferor target-callee]
-  (->> (->callee-url target-callee transferor)
+  "Transfers the given accepted incoming call to a new callee.
+  Returns a new incoming call which can be used by accept-transfer! to
+  accept it or refuse-transfer! to refuse it.  wait-for-transferor!
+  should be invoked with the given incoming call after the target
+  conversation to assure it has been closed."
+  [incoming-call target-callee]
+  (->> (callee->client-sip-url target-callee)
        (transfer incoming-call))
   (expect-events! (::call/events incoming-call) [::event/call-transfer-accepted
                                                  ::event/call-transfer-success])
@@ -596,16 +562,14 @@
 
 (defn replacing-transfer!
   "Initiates an attended transfer by replacing an accepted incoming
-  call by another conversation giving the outgoing call as the
-  target. The transferor should be the callee of the given accepted
-  incoming call who acts as the transferor. The target-callee should
-  be the callee of the targeting outgoing call. The given incoming
-  call can be used by accept-transfer! to accept it or
-  refuse-transfer! to refuse it. wait-for-transferor! should be
-  invoked with the given incoming call after the target conversation
-  to assure it has been closed."
-  [incoming-call target-outgoing-call transferor target-callee]
-  (->> (doto (->callee-url target-callee transferor)
+  call by another conversation giving the outgoing call as the target.
+  The target-callee should be the callee of the targeting outgoing
+  call. The given incoming call can be used by accept-transfer! to
+  accept it or refuse-transfer! to refuse it. wait-for-transferor!
+  should be invoked with the given incoming call after the target
+  conversation to assure it has been closed."
+  [incoming-call target-outgoing-call target-callee]
+  (->> (doto (callee->client-sip-url target-callee)
          (.addParameter "Replaces" (call->replaces-dialog-value target-outgoing-call)))
        (transfer incoming-call))
   (expect-events! (::call/events incoming-call) [::event/call-transfer-accepted

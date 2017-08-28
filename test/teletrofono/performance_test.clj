@@ -22,8 +22,7 @@
                             "config.clj")
         common-client #::client{:realm (get-in config [:common :realm])
                                 :local-address (get-in config [:common :local-address])
-                                :registrar-address (get-in config [:common :registrar-address])
-                                :type :intern}
+                                :registrar-address (get-in config [:common :registrar-address])}
         config-client-fn (get-in config [:performance-test :client-fn])]
     (binding [*config* config
               *clients* (->> (range (get-in config [:performance-test :clients]))

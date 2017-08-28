@@ -122,7 +122,7 @@
           (wait)
           (accept! incoming-call-gray outgoing-call-bell)
           (wait)
-          (replacing-transfer! incoming-call-bell outgoing-call-bell bell gray)
+          (replacing-transfer! incoming-call-bell outgoing-call-bell gray)
           (wait)
           (case variation
             :a (hangup! incoming-call-gray outgoing-call-watson)
@@ -153,7 +153,7 @@
       (ring! incoming-call-gray outgoing-call-bell)
       (wait)
       (cancel! outgoing-call-bell incoming-call-gray)
-      (let [incoming-call-gray (transfer! incoming-call-bell bell gray)]
+      (let [incoming-call-gray (transfer! incoming-call-bell gray)]
         (wait)
         (case variation
           :a (do (accept-transfer! incoming-call-gray)
@@ -181,7 +181,7 @@
     (wait)
     (hold! incoming-call-bell)
     (wait)
-    (let [incoming-call-gray (transfer! incoming-call-bell bell gray)]
+    (let [incoming-call-gray (transfer! incoming-call-bell gray)]
       (case variation
         :a (do (accept-transfer! incoming-call-gray)
                (wait)
