@@ -1,4 +1,7 @@
-{:common {;; Registration realm
+{;; The common section contains all options not directly constrained
+ ;; to a testing section but may used for common purposed by the
+ ;; testing sections below.
+ :common {;; Registration realm
           :realm "asterisk"
 
           ;; Network address of the local SIP-client
@@ -25,11 +28,34 @@
           ;; 500ms we use the default of 64 * T1 according to the
           ;; RFC3261
           :default-timeout-ms 32000}
- :unit-tests {;; Three SIP-clients.
-              :clients {[{:display-name "Thomas Watson"
+ ;; This testing section contains the options required by the unit
+ ;; tests.
+ :unit-tests {;; Three SIP-clients. There are exactly three because
+              ;; the predefined scenario functions require a maximum
+              ;; of three clients. Each of these clients should have
+              ;; an own registered SIP-account on the B2BUA.
+              :clients {[{;; The display name of the SIP-client which
+                          ;; appears as a text representation of the
+                          ;; SIP-address.
+                          :display-name "Thomas Watson"
+                          ;; The local port of the SIP-client. Usually
+                          ;; its 5060 or 5061 bus here we use multiple
+                          ;; SIP-clients on the same machine, so we
+                          ;; use the dynamic/private port
+                          ;; range (49152-65535). This range can be
+                          ;; used by any application allocated
+                          ;; randomly. However the ports are fixed
+                          ;; here and aren't allocated dynamicly, so
+                          ;; there is a chance that these ports are
+                          ;; used by already running applications.
                           :local-port 5061
+                          ;; The extension to the call number
+                          ;; registered on the B2BUA for this
+                          ;; SIP-account.
                           :extension 1001
+                          ;; The authentication username.
                           :user "watson"
+                          ;; The authentication password.
                           :password "thomaswatson"}
                          {:display-name "Graham Bell"
                           :local-port 5062
@@ -41,6 +67,9 @@
                           :extension 1003
                           :user "gray"
                           :password "elishagray"}]}}
+ ;; This testing section contains the options required by the
+ ;; performance test. The performance tests in contrast to the unit
+ ;; tests have a configurable amount of clients.
  :performance-test {;; A function which gets an index number and
                     ;; returns the configuration of a SIP-client
                     ;; asigned to this index
