@@ -8,8 +8,8 @@ Session Initiation Protocol (SIP) of a Back-to-Back User Agent
 (B2BUA).
 
 The name of this project is inspired by Antonio Meucci who called his
-invention of an early voice communicating device "teletrofono". For more information
-see the
+invention of an early voice communicating device "teletrofono". For
+more information see the
 article
 [Invention of the telephone](https://en.wikipedia.org/wiki/Invention_of_the_telephone) on
 wikipedia.org.
@@ -72,6 +72,18 @@ describes the procedure in detail.
 
 You are free to fork this project to implement your own testing
 scenarios suiting the enironment you are working on.
+
+Alternatively you can include this library as a dependency of your own
+project. In this case all the core functionality in the `src`
+subdirectory are available in your project. However the predefined
+scenarios and test functions reside in the `test` subdirectory and
+will not be shipped in the JAR-file used as dependency. You can look
+at the testing sources to get inspired for your own testing
+logic. Please note that you have to bind `*config*` dynamically defined
+in the `teletrofono.config` namespace in order to use the core
+functions in `teletrofono.core`. The fixtures
+`teletrofono.performance-test/performance-fixture` and
+`teletrofono.unit-test/unit-fixture` contain good examples for that.
 
 In the namespace `teletrofono.test-scenarios` you can find a set of
 predefined scenario functions. The scenarios are described in the
