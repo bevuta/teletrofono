@@ -4,7 +4,8 @@ A library written in clojure to write scenarios testing the the
 Session Initiation Protocol (SIP) of a Back-to-Back User Agent
 (B2BUA).
 
-![Antonio Meucci](antonio_meucci.jpg)
+<img src="antonio_meucci.jpg"
+ alt="Antonio Meucci" title="Antonio Meucci" align="right" />
 
 The name of this project is inspired by Antonio Meucci who called his
 invention of an early voice communicating device "teletrofono". For more information
