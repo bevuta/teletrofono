@@ -149,9 +149,9 @@ As soon as something unexpected happens an exception will be thrown by
 one of the core functions. Otherwise the scenario function should
 return `nil`.
 
-You can for example first add the scenario above to the
-`teletrofono.test-scenarios` namespace and then write the appropriate
-unit-test function in
+You can for example first add the scenario above to
+the [teletrofono.test-scenarios](test/teletrofono/test_scenarios.clj)
+namespace and then write the appropriate unit-test function in
 the [teletrofono.unit-test](test/teletrofono/unit_test.clj) namespace:
 
 ``` clojure
