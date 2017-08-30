@@ -92,12 +92,13 @@ functions reside in the `test` subdirectory and will not be shipped in
 the JAR-file used as dependency. You can look at the testing sources
 to get inspired for your own testing logic. Please note that you have
 to bind `*config*` dynamically defined in
-the [teletrofono.config](src/teletrofono/config.clj) namespace in
+the [teletrofono.config](src/teletrofono/config.clj#L10) namespace in
 order to use the core functions
 in [teletrofono.core](src/teletrofono/core.clj). The
 fixtures
 [teletrofono.performance-test/performance-fixture](test/teletrofono/performance_test.clj#L20) and
-`teletrofono.unit-test/unit-fixture` contain good examples for that.
+[teletrofono.unit-test/unit-fixture](test/teletrofono/unit_test.clj#L20) contain
+good examples for that.
 
 In the
 namespace
