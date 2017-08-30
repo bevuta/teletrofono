@@ -29,9 +29,9 @@ file and edit it:
 cp config.example.clj config.clj
 ```
 
-The file `config.example.clj` contains all configuration options with
-documentation as code comments. Please look there for a explanation of
-the options.
+The file [config.example.clj](config.example.clj) contains all
+configuration options with documentation as code comments. Please look
+there for a explanation of the options.
 
 You can now run leiningen with the unit-test namespace and pipe stderr
 and stdout into seperate files.
@@ -40,7 +40,8 @@ and stdout into seperate files.
 time lein test teletrofono.unit-test 2> stderr.log > stdout.log
 ```
 
-Or you can run the performance test you have just configured in `config.clj`.
+Or you can run the performance test you have just configured in your
+`config.clj`.
 
 ``` shell
 time lein test teletrofono.performance-test 2> stderr.log > stdout.log
@@ -48,22 +49,27 @@ time lein test teletrofono.performance-test 2> stderr.log > stdout.log
 
 After that you find a summary of the assertions and perhaps some
 exception-reports in `stdout.log`. Debugging information of received
-SIP-events will also be logged into `stdout.log` unless you configure
-`src/log4j.properties` to do otherwise. `stderr.log` contains logging
-outputs from the java-dependency `com.bevuta/mjsip-fork` with more
-details, which can be a lot depending on the test duration. The `time`
-command measures the duration of the test.
+SIP-events will also be logged into `stdout.log` unless you
+configure [src/log4j.properties](src/log4j.properties) to do
+otherwise. `stderr.log` contains logging outputs from the
+java-dependency
+[com.bevuta/mjsip-fork](https://github.com/bevuta/MjSIP-fork) with
+more details, which can be a lot depending on the test duration. The
+`time` command measures the duration of the test.
 
 ### Unit-tests
 
-The unit tests are gathered in the appropriate testing namespace
-`teletrofono.unit-test`. There is an own test-function for every test
-scenario and its variations.
+The unit tests are gathered in the appropriate testing
+namespace
+[teletrofono.unit-test](test/teletrofono/unit_test.clj). There is an
+own test-function for every test scenario and its variations.
 
 ### Performance-tests
 
 Actually it is just one test function testing all predefined scenarios
-and their variations. In the namespace `teletrofono.performance-test`
+and their variations. In the
+namespace
+[teletrofono.performance-test](test/teletrofono/performance_test.clj)
 you can find the logic for the whole performance test provided by the
 function `run-scenarios-longterm`. The docstring of this function
 describes the procedure in detail.
@@ -85,18 +91,24 @@ available in your project. However the predefined scenarios and test
 functions reside in the `test` subdirectory and will not be shipped in
 the JAR-file used as dependency. You can look at the testing sources
 to get inspired for your own testing logic. Please note that you have
-to bind `*config*` dynamically defined in the `teletrofono.config`
-namespace in order to use the core functions in
-`teletrofono.core`. The fixtures
-`teletrofono.performance-test/performance-fixture` and
+to bind `*config*` dynamically defined in
+the [teletrofono.config](src/teletrofono/config.clj) namespace in
+order to use the core functions
+in [teletrofono.core](src/teletrofono/core.clj). The
+fixtures
+[teletrofono.performance-test/performance-fixture](test/teletrofono/performance_test.clj#L20) and
 `teletrofono.unit-test/unit-fixture` contain good examples for that.
 
-In the namespace `teletrofono.test-scenarios` you can find a set of
-predefined scenario functions. The scenarios are described in the
-docstrings of the functions. All these scenarios are used by
-`teletrofono.unit-test` and `teletrofono.performance-test`. There you
-can find analogous fixtures which prepare the SIP-clients used by the
-scenario functions.
+In the
+namespace
+[teletrofono.test-scenarios](test/teletrofono/test_scenarios.clj) you
+can find a set of predefined scenario functions. The scenarios are
+described in the docstrings of the functions. All these scenarios are
+used by [teletrofono.unit-test](test/teletrofono/unit_test.clj)
+and
+[teletrofono.performance-test](test/teletrofono/performance_test.clj). There
+you can find analogous fixtures which prepare the SIP-clients used by
+the scenario functions.
 
 Here is a simple example of such a scenario function:
 
@@ -138,7 +150,8 @@ return `nil`.
 
 You can for example first add the scenario above to the
 `teletrofono.test-scenarios` namespace and then write the appropriate
-unit-test function in the `teletrofono.unit-test` namespace:
+unit-test function in
+the [teletrofono.unit-test](test/teletrofono/unit_test.clj) namespace:
 
 ``` clojure
 (deftest simple-conversation_short
