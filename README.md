@@ -3,7 +3,7 @@
 <img src="antonio_meucci.jpg"
  alt="Antonio Meucci" title="Antonio Meucci" align="right" />
 
-A library written in clojure to write scenarios testing the the
+A library written in clojure to write scenarios testing the
 Session Initiation Protocol (SIP) of a Back-to-Back User Agent
 (B2BUA).
 
@@ -31,7 +31,7 @@ cp config.example.clj config.clj
 
 The file [config.example.clj](config.example.clj) contains all
 configuration options with documentation as code comments. Please look
-there for a explanation of the options.
+there for an explanation of the options.
 
 You can now run leiningen with the unit-test namespace and pipe stderr
 and stdout into seperate files.
@@ -61,8 +61,8 @@ more details, which can be a lot depending on the test duration. The
 
 The unit tests are gathered in the appropriate testing
 namespace
-[teletrofono.unit-test](test/teletrofono/unit_test.clj). There is an
-own test-function for every test scenario and its variations.
+[teletrofono.unit-test](test/teletrofono/unit_test.clj). There is a
+test function for every test scenario and its variations.
 
 ### Performance-tests
 
@@ -76,8 +76,8 @@ describes the procedure in detail.
 
 ## Customization
 
-You are free to fork this project to implement your own testing
-scenarios suiting the enironment you are working on.
+You are free to fork this project and implement your own testing
+scenarios suiting the environment you are working on.
 
 Alternatively you can include this library as a dependency into your
 leiningen `project.clj`.
@@ -86,10 +86,10 @@ leiningen `project.clj`.
 [bevuta/teletrofono "0.1.0-SNAPSHOT"]
 ```
 
-In this case all the core functionality in the `src` subdirectory are
+In this case all the core functionality in the `src` subdirectory is
 available in your project. However the predefined scenarios and test
 functions reside in the `test` subdirectory and will not be shipped in
-the JAR-file used as dependency. You can look at the testing sources
+the JAR-file used as a dependency. You can look at the testing sources
 to get inspired for your own testing logic. Please note that you have
 to bind `*config*` dynamically defined in
 the [teletrofono.config](src/teletrofono/config.clj#L10) namespace in
@@ -125,12 +125,12 @@ Here is a simple example of such a scenario function:
         ;; with watson as the caller.
         outgoing-call (invite watson bell)
         ;; Bell waits for the invitation identified by the given
-        ;; outgoing call which results in a incoming call as soon as
+        ;; outgoing call which results in an incoming call as soon as
         ;; the invitation was received. The call is not yet
         ;; accepted. The incoming call is associated with Bell as the
         ;; callee.
         incoming-call (await-call! bell outgoing-call)]
-    ;; Bell responds with a Ringing-Signal using the incoming call as
+    ;; Bell responds with a ringing signal using the incoming call as
     ;; the origin and the outgoing call as the receiver of the signal.
     (ring! incoming-call outgoing-call)
     ;; Now Bell accepts the call by signaling a confirmation from the
@@ -161,8 +161,8 @@ the [teletrofono.unit-test](test/teletrofono/unit_test.clj) namespace:
 ```
 
 The name for this test function is the name of the scenario function
-followed by a underscore and the variation name. You find this naming
-pattern also in the unit tests.
+followed by an underscore and the variation name. You also find this naming
+pattern in the unit tests.
 
 The configuration and the SIP-clients are initialized in the fixture,
 so you can try your scenario by simply running this test function or

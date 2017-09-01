@@ -55,7 +55,7 @@
 (defn client-address
   "Creates a NameAddress-object from a SIP-client with the given
   keywords retrieved from the SIP-client for the specific
-  address-parts. The format of such a address is \"display-name\"
+  address-parts. The format of such an address is \"display-name\"
   <sip:user@host:port>."
   [display-name-key user-part-key host-key port-key client]
   (NameAddress. (display-name-key client)
@@ -341,8 +341,8 @@
                  (get-in *config* [:common :register-renew-s])))
 
 (defn minimal-sdp
-  "Helper to create a minimal SDP which probably will not work if
-  initialized a real media stream with the specified SDP-information."
+  "Helper to create a minimal SDP which probably will not work when
+  initializing a real media stream with the specified SDP-information."
   []
   (doto (SessionDescriptor. (OriginField. "root" "379845107" "379845108" "IP4" (get-in *config* [:common :local-address]))
                             (SessionNameField. "call")
@@ -400,7 +400,7 @@
 
 (defn await-call!
   "Waits for an invitation. reference-call is just for debugging
-  purpose to identify the call referenced by this action in case of
+  purposes to identify the call referenced by this action in case of
   failure. Usually it is the outgoing call created by invite. Returns
   a new incoming call which further can be used by ring!, accept! or
   busy!."
@@ -420,7 +420,7 @@
         (URLEncoder/encode "UTF-8"))))
 
 (defn transfer
-  "Sends a REFER-Request to transfer the given incoming call to
+  "Sends a REFER-request to transfer the given incoming call to
   the given SipURL-object as target. Returns nil."
   [incoming-call target-url]
   (.transfer (::mjsip/call incoming-call) (str target-url)))
@@ -428,7 +428,7 @@
 (defn transfer!
   "Transfers the given accepted incoming call to a new callee.
   Returns a new incoming call which can be used by accept-transfer! to
-  accept it or refuse-transfer! to refuse it.  wait-for-transferor!
+  accept it or refuse-transfer! to refuse it. wait-for-transferor!
   should be invoked with the given incoming call after the target
   conversation to assure it has been closed."
   [incoming-call target-callee]
@@ -439,7 +439,7 @@
   (await-call! target-callee incoming-call))
 
 (defn ring
-  "Sends a Ringing-Response associated to the given call."
+  "Sends a Ringing-response associated to the given call."
   [incoming-call]
   (.ring (::mjsip/call incoming-call) nil))
 
@@ -451,12 +451,12 @@
   (expect-events! (::call/events peer-call) [::event/call-ringing]))
 
 (defn ack
-  "Sends a ACK-Request associated with the given call."
+  "Sends a ACK-request associated with the given call."
   [call]
   (.ackWithAnswer (::mjsip/call call) nil))
 
 (defn cancel
-  "Sends a CANCEL-Request associeted with the given outgoing call."
+  "Sends a CANCEL-request associeted with the given outgoing call."
   [call]
   (.cancel (::mjsip/call call)))
 
@@ -469,7 +469,7 @@
   (expect-events! (::call/events call) [::event/call-refused]))
 
 (defn busy
-  "Sends a BUSY-Response associated with the given incoming call."
+  "Sends a BUSY-response associated with the given incoming call."
   [incoming-call]
   (.busy (::mjsip/call incoming-call)))
 
@@ -481,7 +481,7 @@
   (expect-events! (::call/events peer-call) [::event/call-refused]))
 
 (defn hangup
-  "Sends a BYE-Request associeted with the given incoming call."
+  "Sends a BYE-request associeted with the given incoming call."
   [call]
   (.hangup (::mjsip/call call)))
 
@@ -500,7 +500,7 @@
   (expect-events! (::call/events call) [::event/call-closing]))
 
 (defn accept
-  "Sends a OK-Response to accept the open INVITE-Request."
+  "Sends a OK-response to accept the open INVITE-request."
   [incoming-call]
   (.accept (::mjsip/call incoming-call)
            (str (minimal-sdp))))
@@ -528,14 +528,14 @@
   (expect-events! (::call/events peer-call) [::event/call-closing]))
 
 (defn redirect
-  "Sends a new INVITE-Request to the given SipURL-object representing
+  "Sends a new INVITE-request to the given SipURL-object representing
   the new callee. This redirects the unaccepted incoming call to a new
   callee."
   [incoming-call callee-url]
   (.redirect (::mjsip/call incoming-call) (str callee-url)))
 
 (defn hold
-  "Sends a ReINVITE-Request to set the given call to hold."
+  "Sends a ReINVITE-request to set the given call to hold."
   [call]
   (let [sdp (.addAttribute (minimal-sdp) (AttributeField. "sendonly"))]
     (.modify (::mjsip/call call) nil (str sdp))))
@@ -548,7 +548,7 @@
   (expect-events! (::call/events call) [::event/call-reinvite-accepted]))
 
 (defn resume!
-  "Resumes the given accepted call previously holded."
+  "Resumes the given accepted call previously held."
   [call]
   (let [sdp (.getRemoteSessionDescriptor (::mjsip/call call))]
     (.modify (::mjsip/call call) nil sdp)
