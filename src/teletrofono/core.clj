@@ -474,8 +474,9 @@
   (.busy (::mjsip/call incoming-call)))
 
 (defn busy!
-  "Signals that the callee is busy by the given unaccepted incoming
-  call and assures that the peer-call has received the denial."
+  "Signals that the callee of the given unaccepted incoming
+  call is busy and assures that the peer-call has received the
+  denial."
   [incoming-call peer-call]
   (busy incoming-call)
   (expect-events! (::call/events peer-call) [::event/call-refused]))
@@ -548,7 +549,7 @@
   (expect-events! (::call/events call) [::event/call-reinvite-accepted]))
 
 (defn resume!
-  "Resumes the given accepted call previously held."
+  "Resumes the given accepted call previously placed on hold."
   [call]
   (let [sdp (.getRemoteSessionDescriptor (::mjsip/call call))]
     (.modify (::mjsip/call call) nil sdp)
