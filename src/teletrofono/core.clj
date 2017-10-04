@@ -2,8 +2,7 @@
   (:require [clojure.core.async :as async]
             [clojure.spec :as s]
             [clojure.tools.logging :as log]
-            [teletrofono.utils :refer [child-ns
-                                       update-with]]
+            [teletrofono.utils :refer [child-ns]]
             [teletrofono.config :refer [*config*]])
   (:import (org.zoolu.sip.provider SipProvider
                                    SipProviderListener
@@ -328,10 +327,10 @@
 (defn client
   "Creates and initializes a new SIP-client object for immediate use."
   [params]
-  (-> params
-      (update-with assoc ::mjsip/sip-provider sip-provider)
-      (update-with merge register-agent)
-      (update-with assoc ::client/incoming-calls client-incoming-calls)))
+  (as-> params client
+    (assoc client ::mjsip/sip-provider (sip-provider client))
+    (merge client (register-agent client))
+    (assoc client ::client/incoming-calls (client-incoming-calls client))))
 
 (defn register
   "Registers the given SIP-client on the associated B2BUA."
@@ -381,8 +380,8 @@
     (when-not (empty? event-names)
       (let [event (await! events-chan (get-in *config* [:common :default-timeout-ms]))]
         (when (= ::timeout event)
-          ::timeout (throw (ex-info (str "Timeout while waiting for one of the expected events")
-                                    {::expected event-names})))
+          (throw (ex-info (str "Timeout while waiting for one of the expected events")
+                          {::expected event-names})))
         (treat-received-event event event-names)
         (recur (remove (-> event ::event/name list set) event-names))))))
 
