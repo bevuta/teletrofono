@@ -61,14 +61,14 @@
     (if (= port timeout-chan) ::timeout item)))
 
 (defn run-scenarios-longterm
-  "Simulates a longterm activity between the given SIP-clients.  Runs
-  the scenarios of the given collection parallel and repeatedly for
+  "Simulates longterm activity between the given SIP-clients. Runs
+  the scenarios of the given collection in parallel and repeatedly for
   the given duration in minutes. The collection will be shuffled
   before every iteration, so the scenarios are picked randomly
-  assuring every scenario has been choosed once after every
+  assuring every scenario has been chosen once after every
   iteration. Waits after every scenario between min-delay-s and
   max-delay-s seconds. threads specifies the maximum number of
-  parallel running scenarios. scenario-coll should be a collection of
+  scenarios running in parallel. scenario-coll should be a collection of
   vectors with the scenario function as the first element, the
   variation as the second element and the count of clients the
   scenario is designed for as the third element."

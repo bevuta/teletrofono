@@ -15,7 +15,7 @@
   (Thread/sleep (* +long-conversation-m+ 60000)))
 
 (defn call-without-conversation
-  "Simulates a call accepting it.
+  "Simulates a call without a conversation.
   Variations:
   :a - watson hangs up
   :b - bell hangs up "
@@ -48,7 +48,8 @@
       (hangup! outgoing-call incoming-call))))
 
 (defn call-hold-resume
-  "Simulates a call with a conversation holded and resumed once.
+  "Simulates a call with a conversation placed on hold and
+  resumed once.
   Variations:
   :a - bell holds and resumes and does a hangup after that
   :b - watson holds and resumes and does a hangup after that"
@@ -105,7 +106,7 @@
   Variations:
   :a - gray hangs up the call with watson
   :b - watson hangs up the call with gray
-  :c - gray signals business on the consultational call from bell"
+  :c - gray signals busyness on the consultational call from bell"
   [variation watson bell gray]
   (let [outgoing-call-watson (invite watson bell)
         incoming-call-bell (await-call! bell outgoing-call-watson)]
