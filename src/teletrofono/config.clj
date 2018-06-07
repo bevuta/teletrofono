@@ -1,5 +1,5 @@
 (ns teletrofono.config
-  (:require [clojure.spec :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 (defn load-config [spec file]
   (let [config (load-file file)]

@@ -1,5 +1,5 @@
 (ns teletrofono.unit-test.config
-  (:require [clojure.spec :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 (s/def ::display-name string?)
 (s/def ::local-port pos?)

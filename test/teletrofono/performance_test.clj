@@ -2,7 +2,7 @@
   (:require [clojure.core.async :as async]
             [clojure.test :refer :all]
             [clojure.string :as str]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
 
             [teletrofono.core :as core]
             [teletrofono.config :refer [*config*

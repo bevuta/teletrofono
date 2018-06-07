@@ -1,6 +1,6 @@
 (ns teletrofono.unit-test
   (:require [clojure.test :refer :all]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
 
             [teletrofono.core :as core]
             [teletrofono.common.config :as common.config]

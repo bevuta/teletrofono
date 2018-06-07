@@ -1,6 +1,6 @@
 (ns teletrofono.core
   (:require [clojure.core.async :as async]
-            [clojure.spec :as s]
+            [clojure.spec.alpha :as s]
             [clojure.tools.logging :as log]
             [teletrofono.utils :refer [child-ns]]
             [teletrofono.config :refer [*config*]])

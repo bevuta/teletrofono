@@ -1,5 +1,5 @@
 (ns teletrofono.common.config
-  (:require [clojure.spec :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 (s/def ::realm string?)
 (s/def ::local-address string?)

@@ -1,5 +1,5 @@
 (ns teletrofono.performance-test.config
-  (:require [clojure.spec :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 (s/def ::client-fn fn?)
 (s/def ::register-delay-ms nat-int?)
