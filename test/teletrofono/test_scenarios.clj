@@ -206,10 +206,7 @@
     (ring! incoming-call-bell outgoing-call-watson)
     (wait)
     (let [incoming-call-gray (redirect! incoming-call-bell gray)]
-      ;; watson doesn't receive this Ringing-Response,
-      ;; because the B2BUA doesn't forward it, therefore use just
-      ;; the "ring"-fn instead of "ring!"
-      (ring incoming-call-gray)
+      (ring! incoming-call-gray outgoing-call-watson)
       (wait)
       (case variation
         :a (do (accept! incoming-call-gray outgoing-call-watson)
