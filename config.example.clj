@@ -95,7 +95,10 @@
                     ;; Timeout in milliseconds for a running scenario.
                     :thread-timeout-ms 120000
 
-                    ;; Count of clients to use for the performance test.
+                    ;; Count of clients to use for the performance
+                    ;; test.  It should be at least four clients. One
+                    ;; more then the number of clients a scenario with
+                    ;; the most attendants requires
                     :clients 400
 
                     ;; Maximum number of parallel running scenarios.

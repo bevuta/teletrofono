@@ -77,6 +77,9 @@
    duration-m
    threads
    clients]
+  (let [min-client-count (inc (apply max (map #(nth % 2) scenario-coll)))]
+    (assert (>= (count clients) min-client-count)
+            (str "There should be at least " min-client-count " clients available")))
   (let [;; Have to use a buffer size one less then the given count of threads
         ;; because this channel gets the result of the thread, so as soon as
         ;; an item is put the next thread has already been started.
