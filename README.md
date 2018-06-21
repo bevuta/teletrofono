@@ -14,6 +14,51 @@ article
 [Invention of the telephone](https://en.wikipedia.org/wiki/Invention_of_the_telephone) on
 wikipedia.org.
 
+## Setup
+
+First make sure you have a working B2BUA running. If you just like to
+try this library in a minimal local environment, you can find an
+example configuration for an [Asterisk
+PBX](https://en.wikipedia.org/wiki/Asterisk_%28PBX%29) in this
+repository.
+
+First install the Asterisk PBX software using the package manager of
+your linux distribution. For instance we tested our example
+configuration with the asterisk package for Debian Stretch:
+
+``` shell
+apt-get install asterisk
+```
+
+Create and configure your `sip.conf` (the debian package provides a
+sample configuration file in
+`/usr/share/asterisk/conf/samples/sip.conf.sample`).  Copy the
+`sip-teletrofono.conf` from this repo to the location of your
+`sip.conf`.  Attach the following lines at the end of your `sip.conf`:
+
+``` text
+#include "sip-teletrofono.conf"
+```
+
+You can adjust the passwords of the SIP-accounts in `sip-teletrofono.conf`.
+
+Create and configure your `extensions.conf` (the debian package
+provides a sample configuration file in
+`/usr/share/asterisk/conf/samples/extensions.conf.sample`).  Copy the
+`extensions-teletrofono.conf` from this repo to the location of your
+`extensions.conf`.  Attach the following lines at the end of your
+`extensions.conf`:
+
+``` text
+#include "extensions-teletrofono.conf"
+```
+
+Finally restart your asterisk service and you are ready to go:
+
+``` shell
+/etc/init.d/asterisk restart
+```
+
 ## Usage
 
 Clone the project.

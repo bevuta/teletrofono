@@ -55,24 +55,24 @@
                          ;; The extension to the call number
                          ;; registered on the B2BUA for this
                          ;; SIP-account.
-                         :extension 1001
+                         :extension 100
 
                          ;; The authentication username.
-                         :user "watson"
+                         :user "100"
 
                          ;; The authentication password.
-                         :password "thomaswatson"}
+                         :password "changeme100"}
 
                         {:display-name "Graham Bell"
                          :local-port 49153
-                         :extension 1002
-                         :user "bell"
-                         :password "grahambell"}
+                         :extension 101
+                         :user "101"
+                         :password "changeme101"}
                         {:display-name "Elisha Gray"
                          :local-port 49154
-                         :extension 1003
-                         :user "gray"
-                         :password "elishagray"}]}
+                         :extension 102
+                         :user "102"
+                         :password "changeme102"}]}
  ;; This testing section contains the options required by the
  ;; performance test. The performance tests in contrast to the unit
  ;; tests have a configurable amount of clients.
@@ -80,12 +80,16 @@
                     ;; returns the configuration of a SIP-client
                     ;; assigned to this index.
                     :client-fn (fn [i]
-                                 (let [id (+ 1000 i)]
+                                 (let [id (+ 100 i)
+                                       passwords {101 "changeme101"
+                                                  102 "changeme102"
+                                                  103 "changeme103"
+                                                  104 "changeme104"}]
                                    {:display-name (str "Testuser " id)
-                                    :local-port (+ 49152 id)
+                                    :local-port (+ 49152 i)
                                     :extension (str id)
                                     :user (str id)
-                                    :password "testuser"}))
+                                    :password (get passwords id)}))
 
                     ;; Delay in milliseconds between each registration
                     ;; of the SIP-client designed to not overwhelm the
@@ -99,10 +103,10 @@
                     ;; test.  It should be at least four clients. One
                     ;; more then the number of clients a scenario with
                     ;; the most attendants requires
-                    :clients 400
+                    :clients 4
 
                     ;; Maximum number of parallel running scenarios.
-                    :max-threads 50
+                    :max-threads 3
 
                     ;; Duration of the performance test.
                     :duration-m 5
