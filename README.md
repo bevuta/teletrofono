@@ -33,8 +33,9 @@ apt-get install asterisk
 Create and configure your `sip.conf` (the debian package provides a
 sample configuration file in
 `/usr/share/asterisk/conf/samples/sip.conf.sample`).  Copy the
-`sip-teletrofono.conf` from this repo to the location of your
-`sip.conf`.  Attach the following lines at the end of your `sip.conf`:
+[sip-teletrofono.conf](sip-teletrofono.conf) from this repo to the
+location of your `sip.conf`.  Attach the following lines at the end of
+your `sip.conf`:
 
 ``` text
 #include "sip-teletrofono.conf"
@@ -45,9 +46,9 @@ You can adjust the passwords of the SIP-accounts in `sip-teletrofono.conf`.
 Create and configure your `extensions.conf` (the debian package
 provides a sample configuration file in
 `/usr/share/asterisk/conf/samples/extensions.conf.sample`).  Copy the
-`extensions-teletrofono.conf` from this repo to the location of your
-`extensions.conf`.  Attach the following lines at the end of your
-`extensions.conf`:
+[extensions-teletrofono.conf](extensions-teletrofono.conf) from this
+repo to the location of your `extensions.conf`.  Attach the following
+lines at the end of your `extensions.conf`:
 
 ``` text
 #include "extensions-teletrofono.conf"
