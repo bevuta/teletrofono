@@ -61,23 +61,24 @@
     (if (= port timeout-chan) ::timeout item)))
 
 (defn run-scenarios-longterm
-  "Simulates longterm activity between the given SIP-clients. Runs
-  the scenarios of the given collection in parallel and repeatedly for
-  the given duration in minutes. The collection will be shuffled
-  before every iteration, so the scenarios are picked randomly
-  assuring every scenario has been chosen once after every
-  iteration. Waits after every scenario between min-delay-s and
-  max-delay-s seconds. threads specifies the maximum number of
-  scenarios running in parallel. scenario-coll should be a collection of
-  vectors with the scenario function as the first element, the
-  variation as the second element and the count of clients the
-  scenario is designed for as the third element."
+  "Simulates longterm activity between the given SIP-clients. Runs the
+  scenarios of the given collection in parallel and repeatedly for the
+  given duration in minutes. The collection will be shuffled before
+  every iteration, so the scenarios are picked randomly assuring every
+  scenario has been chosen once after every iteration. Waits after
+  every scenario between min-delay-s and max-delay-s seconds. threads
+  specifies the maximum number of scenarios running in
+  parallel. scenario-coll should be a collection of vectors with the
+  scenario function as the first element, the variation as the second
+  element and the count of clients the scenario is designed for as the
+  third element.  The clients parameter should contain at least as
+  many clients as the scenario with the most attendants requires."
   [scenario-coll
    min-delay-s max-delay-s
    duration-m
    threads
    clients]
-  (let [min-client-count (inc (apply max (map #(nth % 2) scenario-coll)))]
+  (let [min-client-count (apply max (map #(nth % 2) scenario-coll))]
     (assert (>= (count clients) min-client-count)
             (str "There should be at least " min-client-count " clients available")))
   (let [;; Have to use a buffer size one less then the given count of threads
