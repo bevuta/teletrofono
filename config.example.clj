@@ -81,10 +81,10 @@
                     ;; assigned to this index.
                     :client-fn (fn [i]
                                  (let [id (+ 100 i)
-                                       passwords {101 "changeme101"
+                                       passwords {100 "changeme100"
+                                                  101 "changeme101"
                                                   102 "changeme102"
-                                                  103 "changeme103"
-                                                  104 "changeme104"}]
+                                                  103 "changeme103"}]
                                    {:display-name (str "Testuser " id)
                                     :local-port (+ 49152 i)
                                     :extension (str id)
