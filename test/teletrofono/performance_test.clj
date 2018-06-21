@@ -97,7 +97,8 @@
                            (let [[scenario-fn variation n-clients] scenario
                                  clients (->> #(async/<!! client-chan)
                                               (repeatedly)
-                                              (take n-clients))
+                                              (take n-clients)
+                                              vec)
                                  thread-chan (async/thread
                                                (let [result (run-scenario-catching scenario-fn
                                                                                    variation
